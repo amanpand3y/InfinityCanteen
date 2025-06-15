@@ -17,6 +17,9 @@ const userSchema = new mongoose.Schema({
     },
     roomno :{
         type: Number,
+    },
+    phone:{
+        type: String,
     }
 })
 

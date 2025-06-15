@@ -20,4 +20,28 @@ const createCurrentUser = async (req: Request, res: Response) => {
   }
 };
 
-export default {createCurrentUser};
+const updateCurrentUser =async(req: Request, res:Response)=>{
+  try {
+    const { name,roomno,hostel,phone,auth0Id } = req.body;
+    const existingUser = await User.findOne({ auth0Id });
+
+    if(!existingUser){
+      return res.status(404).json({message:"User not found"});
+    }
+
+    existingUser.name=name;
+    existingUser.roomno=roomno;
+    existingUser.hostel=hostel;
+    existingUser.phone=phone;
+
+    await existingUser.save();
+
+    res.send(existingUser);    
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error creating user" });
+  }
+}
+
+export default {createCurrentUser,updateCurrentUser};
