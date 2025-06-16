@@ -22,8 +22,8 @@ const createCurrentUser = async (req: Request, res: Response) => {
 
 const updateCurrentUser =async(req: Request, res:Response)=>{
   try {
-    const { name,roomno,hostel,phone,auth0Id } = req.body;
-    const existingUser = await User.findOne({ auth0Id });
+    const { name,roomno,hostel,phone } = req.body;
+    const existingUser = await User.findOne({ _id:req.userId });
 
     if(!existingUser){
       return res.status(404).json({message:"User not found"});

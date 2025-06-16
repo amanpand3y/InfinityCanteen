@@ -36,6 +36,11 @@ const UserProfileForm = ({onSave,isLoading}:Props) => {
     const form = useForm<UserFormData>({
         resolver: zodResolver(formSchema),
     });
+
+    const handleSubmit = (data: UserFormData) => {
+        console.log("Form submitted with:", data); // ✅ should appear in browser console
+        onSave(data);
+    };
     
     return(
         <Form {...form}>

@@ -12,14 +12,14 @@ export const validateMyUserRequest = (req: Request, res: Response, next: NextFun
         errors.push("Hostel must be a string");
     }
 
-    // Room number validation
+    
     if (
-        roomno === undefined ||
-        typeof roomno !== "number" ||
-        !Number.isInteger(roomno) ||
-        roomno <= 0
-    ) {
-        errors.push("Room number must be a positive integer");
+        typeof roomno !== "string" ||           
+        isNaN(Number(roomno)) ||                
+        !Number.isInteger(Number(roomno)) ||      
+        Number(roomno) <= 0                       
+        ) {
+        errors.push("Room number must be a positive integer string");
     }
 
     // Phone validation

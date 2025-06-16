@@ -28,19 +28,61 @@ const useCreateMyUser = () => {
 
     const {
         mutateAsync: createUser,
-        isPending,
+        isPending: isLoading,
         isError,
         isSuccess,
     } = useMutation({ mutationFn:createMyUserRequest});
 
     return {
         createUser,
-        isPending,
+        isLoading,
         isError,
         isSuccess,
     }
-
-
 }
 
-export {useCreateMyUser};
+type FormData = {
+    name: string,
+    hostel: string,
+    roomno: string,
+    phone: string,
+}
+const useUpdateMyUser = () => {
+    const{getAccessTokenSilently}=useAuth0();
+
+    const updateMyUserRequest = async (formData:FormData)=>{
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(`${API_BASE_URL}/api/my/user`,{
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData)
+        })
+
+        if(!response.ok){
+            throw new Error("Failed to update user");
+        }
+
+    };
+
+    const {
+        mutateAsync: updateUser,
+        isPending: isLoading,
+        isError,
+        isSuccess,
+        error,
+        reset,
+    } = useMutation({ mutationFn:updateMyUserRequest});
+
+    return {
+        updateUser,
+        isLoading,
+    }
+
+
+     
+}
+
+export {useCreateMyUser,useUpdateMyUser};
