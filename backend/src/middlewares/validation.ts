@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 export const validateMyUserRequest = (req: Request, res: Response, next: NextFunction) => {
-    const { name, hostel, roomno, Phone } = req.body;
+    const { name, hostel, roomno, phone } = req.body;
     
     const errors: string[] = [];
     if (!name || typeof name !== "string") {
@@ -12,12 +12,23 @@ export const validateMyUserRequest = (req: Request, res: Response, next: NextFun
         errors.push("Hostel must be a string");
     }
 
-    if (!roomno || !Number.isInteger(roomno)) {
-        errors.push("Roomno must be an integer");
+    // Room number validation
+    if (
+        roomno === undefined ||
+        typeof roomno !== "number" ||
+        !Number.isInteger(roomno) ||
+        roomno <= 0
+    ) {
+        errors.push("Room number must be a positive integer");
     }
 
-    if (!Phone || typeof Phone !== "string") {
-        errors.push("Phone must be a string");
+    // Phone validation
+    if (
+        !phone ||
+        typeof phone !== "string" ||
+        !/^\d{10}$/.test(phone)
+    ) {
+        errors.push("Phone must be a string of exactly 10 digits");
     }
 
     if (errors.length > 0) {
