@@ -48,6 +48,7 @@ type FormData = {
     hostel: string,
     roomno: string,
     phone: string,
+    college: string,
 }
 const useUpdateMyUser = () => {
     const{getAccessTokenSilently}=useAuth0();

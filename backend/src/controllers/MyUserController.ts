@@ -22,7 +22,7 @@ const createCurrentUser = async (req: Request, res: Response) => {
 
 const updateCurrentUser =async(req: Request, res:Response)=>{
   try {
-    const { name,roomno,hostel,phone } = req.body;
+    const { name,roomno,hostel,phone,college } = req.body;
     const existingUser = await User.findOne({ _id:req.userId });
 
     if(!existingUser){
@@ -33,6 +33,7 @@ const updateCurrentUser =async(req: Request, res:Response)=>{
     existingUser.roomno=roomno;
     existingUser.hostel=hostel;
     existingUser.phone=phone;
+    existingUser.college=college;
 
     await existingUser.save();
 

@@ -24,6 +24,7 @@ const formSchema =z.object({
     .refine(val => /^\d{10}$/.test(val), {
         message: "Phone Number must be exactly 10 digits and numeric",
     }),
+    college: z.string().min(1,"College Name is required"),
 
 });
 
@@ -71,8 +72,26 @@ const UserProfileForm = ({currentUser,onSave,isLoading}:Props) => {
                         <FormMessage/>
                     </FormItem>
                 )}/>
+                <FormField control={form.control} name="phone" render={({field})=>(
+                    <FormItem className="flex-1">
+                        <FormLabel>Phone No.</FormLabel>
+                        <FormControl>
+                            <Input {...field} className="bg-white"/>
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}/>
 
                 <div className="flex flex-col md:flex-row gap-4">
+                    <FormField control={form.control} name="college" render={({field})=>(
+                        <FormItem className="flex-1">
+                            <FormLabel>College Name</FormLabel>
+                            <FormControl>
+                                <Input {...field} className="bg-white" />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}/>
                     <FormField control={form.control} name="hostel" render={({field})=>(
                         <FormItem className="flex-1">
                             <FormLabel>Hostel</FormLabel>
@@ -92,15 +111,6 @@ const UserProfileForm = ({currentUser,onSave,isLoading}:Props) => {
                         </FormItem>
                     )}/>
 
-                    <FormField control={form.control} name="phone" render={({field})=>(
-                        <FormItem className="flex-1">
-                            <FormLabel>Phone No.</FormLabel>
-                            <FormControl>
-                                <Input {...field} className="bg-white"/>
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}/>
                 </div>
                 {isLoading? (<LoadingButton/>) : (<Button type="submit" className="bg-orange-500">Submit</Button>)}
 

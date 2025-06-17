@@ -5,4 +5,5 @@ export type User = {
     hostel: string;
     roomno: string;
     phone: string;
+    college: string;
 }
