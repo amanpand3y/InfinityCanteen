@@ -14,7 +14,8 @@ const restaurantSchema = new mongoose.Schema({
     dishes: [{type:String,required:true}],
     menuItems: [menuItemSchema],
     imageUrl: {type:String,required:true},
-    lastUpdated: {type:Date,required:true}
+    lastUpdated: {type:Date,required:true},
+    phone:{type: String,required:true},
 });
 
 const Restaurant= mongoose.model("Restaurant",restaurantSchema);

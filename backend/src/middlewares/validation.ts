@@ -45,7 +45,7 @@ export const validateMyRestaurantRequest = (
   res: Response,
   next: NextFunction
 ) => {
-  const {restaurantName,collegeCity,deliveryPrice,estimatedDeliveryTime,imageUrl,dishes,menuItems,} = req.body;
+  const {restaurantName,collegeCity,deliveryPrice,estimatedDeliveryTime,imageUrl,dishes,menuItems,phone} = req.body;
 
   const errors: string[] = [];
 
@@ -84,6 +84,13 @@ export const validateMyRestaurantRequest = (
   if (!Array.isArray(menuItems) || menuItems.length === 0) {
     errors.push("Menu Items must be a non-empty array");
   }
+  if (
+        !phone ||
+        typeof phone !== "string" ||
+        !/^\d{10}$/.test(phone)
+    ) {
+        errors.push("Phone must be a string of exactly 10 digits");
+    }
 
   if (errors.length > 0) {
     res.status(400).json({ errors });
