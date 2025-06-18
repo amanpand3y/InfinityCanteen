@@ -22,11 +22,11 @@ const MenuSection = ()=> {
             <FormField control={control} name="menuItems" render={()=>(
                 <FormItem className="flex flex-col gap-2">
                     {fields.map((_,index)=>(
-                        <MenuItemInput index={index} removeMenuItem={()=>remove(index)}/>
+                        <MenuItemInput key={_.id} index={index} removeMenuItem={()=>remove(index)}/>
                     ))}
                 </FormItem>
             )}/>
-            <Button type="button" onClick={()=>append({name:"",price:""})}>
+            <Button type="button" onClick={()=>append({name:"",price:0})}>
                 Add Menu Item
             </Button>
         </div>

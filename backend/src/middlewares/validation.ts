@@ -1,101 +1,74 @@
+import { body, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 
-export const validateMyUserRequest = (req: Request, res: Response, next: NextFunction) => {
-    const { name, hostel, roomno, phone,college } = req.body;
-    
-    const errors: string[] = [];
-    if (!name || typeof name !== "string") {
-        errors.push("Name must be a string");
-    }
-
-    if (!hostel || typeof hostel !== "string") {
-        errors.push("Hostel must be a string");
-    }
-    if (!college || typeof college !== "string") {
-        errors.push("College Name must be a string");
-    }
-
-    
-    if (
-        typeof roomno !== "string" ||           
-        isNaN(Number(roomno)) ||                
-        !Number.isInteger(Number(roomno)) ||      
-        Number(roomno) <= 0                       
-        ) {
-        errors.push("Room number must be a positive integer string");
-    }
-
-    // Phone validation
-    if (
-        !phone ||
-        typeof phone !== "string" ||
-        !/^\d{10}$/.test(phone)
-    ) {
-        errors.push("Phone must be a string of exactly 10 digits");
-    }
-
-    if (errors.length > 0) {
-        return res.status(400).json({ errors });
-    }
-    next();
-};
-
-export const validateMyRestaurantRequest = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const {restaurantName,collegeCity,deliveryPrice,estimatedDeliveryTime,imageUrl,dishes,menuItems,phone} = req.body;
-
-  const errors: string[] = [];
-
-  if (!restaurantName || typeof restaurantName !== "string") {
-    errors.push("Restaurant Name must be a string");
+const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-
-  if (!collegeCity || typeof collegeCity !== "string") {
-    errors.push("College City must be a string");
-  }
-
-  if (
-    deliveryPrice === undefined ||
-    typeof deliveryPrice !== "number" ||
-    deliveryPrice < 0
-  ) {
-    errors.push("Delivery Price must be a non-negative number");
-  }
-
-  if (
-    estimatedDeliveryTime === undefined ||
-    typeof estimatedDeliveryTime !== "number" ||
-    estimatedDeliveryTime <= 0
-  ) {
-    errors.push("Estimated Delivery Time must be a positive number");
-  }
-
-  if (!imageUrl || typeof imageUrl !== "string") {
-    errors.push("Image URL must be a string");
-  }
-
-  if (!Array.isArray(dishes) || dishes.length === 0) {
-    errors.push("Dishes must be a non-empty array");
-  }
-
-  if (!Array.isArray(menuItems) || menuItems.length === 0) {
-    errors.push("Menu Items must be a non-empty array");
-  }
-  if (
-        !phone ||
-        typeof phone !== "string" ||
-        !/^\d{10}$/.test(phone)
-    ) {
-        errors.push("Phone must be a string of exactly 10 digits");
-    }
-
-  if (errors.length > 0) {
-    res.status(400).json({ errors });
-    return;
-  }
-
   next();
 };
+
+export const validateMyUserRequest = [
+  body("name").isString().notEmpty().withMessage("Name must be a string"),
+
+  body("hostel").isString().notEmpty().withMessage("Hostel must be a string"),
+
+  body("college").isString().notEmpty().withMessage("College Name must be a string"),
+
+  body("roomno")
+    .isString().withMessage("Room number must be a string")
+    .custom(value => {
+      const num = Number(value);
+      if (isNaN(num) || !Number.isInteger(num) || num <= 0) {
+        throw new Error("Room number must be a positive integer string");
+      }
+      return true;
+    }),
+
+  body("phone")
+    .isString()
+    .matches(/^\d{10}$/)
+    .withMessage("Phone must be a string of exactly 10 digits"),
+
+  handleValidationErrors,
+];
+
+
+export const validateMyRestaurantRequest = [
+  body("restaurantName").isString().notEmpty().withMessage("Restaurant Name is required"),
+
+  body("collegeCity").isString().notEmpty().withMessage("College City is required"),
+
+  body("phone")
+    .isString()
+    .matches(/^\d{10}$/)
+    .withMessage("Phone must be a string of exactly 10 digits"),
+
+  body("deliveryPrice")
+    .isFloat({ min: 0 })
+    .withMessage("Delivery Price must be a non-negative number"),
+
+  body("estimatedDeliveryTime")
+    .isFloat({ min: 1 })
+    .withMessage("Estimated Delivery Time must be a positive number"),
+
+  body("dishes")
+    .isArray({ min: 1 })
+    .withMessage("Dishes must be a non-empty array"),
+
+  body("menuItems")
+    .isArray({ min: 1 })
+    .withMessage("Menu Items must be a non-empty array"),
+
+  body("menuItems.*.name")
+    .isString()
+    .notEmpty()
+    .withMessage("Each menu item must have a name"),
+
+  body("menuItems.*.price")
+    .isFloat({ min: 0 })
+    .withMessage("Each menu item must have a non-negative price"),
+
+  handleValidationErrors,
+];

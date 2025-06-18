@@ -7,3 +7,22 @@ export type User = {
     phone: string;
     college: string;
 }
+export type MenuItem={
+    _id:string;
+    name:string;
+    price:string;
+}
+
+export type Restaurant = {
+    _id:string;
+    user:string;
+    restaurantName:string;
+    collegeCity:string;
+    phone:string;
+    deliveryPrice: number;
+    estimatedDeliveryTime: number;
+    dishes: string[];
+    menuItems: MenuItem[];
+    imageUrl: string;
+    lastUpdated: string;
+}
