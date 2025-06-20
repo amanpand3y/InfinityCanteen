@@ -1,6 +1,7 @@
 import { Button } from "./ui/button"
 import {useAuth0} from "@auth0/auth0-react";
 import UsernameMenu from "./UsernameMenu";
+import DarkModeToggle from "./ui/darkmodetoggle";
 
 const MainNav = () =>{
     const {loginWithRedirect,isAuthenticated}=useAuth0();
@@ -12,9 +13,8 @@ const MainNav = () =>{
                 className="font-bold hover:text-orange-500 hover:bg-white "
                 onClick={async()=> await loginWithRedirect()}>
                         Log In
-                </Button>
+               </Button>
             ) }
-
         </span>
         
     )

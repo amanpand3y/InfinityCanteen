@@ -16,7 +16,16 @@ const searchRestaurant = async (req:Request,res:Response) => {
         const collegeCityCheck = await Restaurant.countDocuments(query);
 
         if(collegeCityCheck === 0){ 
-            res.status(404).json([]);
+            res.status(404).json(
+                {
+                    data:[],
+                    pagination: {
+                        total:0,
+                        page: 1,
+                        pages: 1,
+                    }
+                }
+            );
             return;
         }
 
