@@ -3,57 +3,41 @@ import DishCheckbox from "./DishCheckbox";
 import { useFormContext } from "react-hook-form";
 
 const dishList = [
-  "American",
-  "BBQ",
-  "Breakfast",
-  "Burgers",
-  "Cafe",
-  "Chinese",
-  "Desserts",
-  "French",
-  "Greek",
-  "Healthy",
-  "Indian",
-  "Italian",
-  "Japanese",
-  "Mexican",
-  "Noodles",
-  "Organic",
-  "Pasta",
-  "Pizza",
-  "Salads",
-  "Seafood",
-  "Spanish",
-  "Steak",
-  "Sushi",
-  "Tacos",
-  "Tapas",
-  "Vegan",
+  "American", "BBQ", "Breakfast", "Burgers", "Cafe", "Chinese",
+  "Desserts", "French", "Greek", "Healthy", "Indian", "Italian",
+  "Japanese", "Mexican", "Noodles", "Organic", "Pasta", "Pizza",
+  "Salads", "Seafood", "Spanish", "Steak", "Sushi", "Tacos",
+  "Tapas", "Vegan",
 ];
 
-const DishesSection = ()=>{
-    const {control}= useFormContext();
-    return (
-        <div className="space-y-2">
-            <div>
-                <h2 className="text-2xl font-bold">Dishes</h2>
-                <FormDescription>
-                    Select the Dishes that your Restaurant serves
-                </FormDescription>
-            </div>
-            <FormField control={control} name="dishes" render={({field})=>
-                <FormItem>
-                    <div className="grid md:grid-cols-5 gap-1">
-                        {dishList.map((dishItem)=>(
-                            <DishCheckbox dish={dishItem} field={field}/>
-                        ))}
-                        
-                    </div>
-                    <FormMessage/>
-                </FormItem>
-            }/>
-        </div>
+const DishesSection = () => {
+  const { control } = useFormContext();
 
-    )
-}
+  return (
+    <div className="space-y-2">
+      <div>
+        <h2 className="text-2xl font-bold">Dishes</h2>
+        <FormDescription>
+          Select the Dishes that your Restaurant serves
+        </FormDescription>
+      </div>
+
+      <FormField
+        control={control}
+        name="dishes"
+        render={({ field }) => (
+          <FormItem>
+            <div className="grid md:grid-cols-5 gap-1">
+              {dishList.map((dishItem) => (
+                <DishCheckbox key={dishItem} dish={dishItem} field={field} />
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
 export default DishesSection;

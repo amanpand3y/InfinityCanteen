@@ -9,6 +9,8 @@ import MenuSection from "./MenuSection";
 import ImageSection from "./ImageSection";
 import { Button } from "@/components/ui/button";
 import LoadingButton from "@/components/LoadingButton";
+import type { Restaurant } from "@/types";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     restaurantName: z.string().min(1,"Restaurant Name is required"),
@@ -17,6 +19,7 @@ const formSchema = z.object({
         required_error: "Delivery price is required",
         invalid_type_error: "Must be a valid number",
     })
+    .int({ message: "Must be a whole number (no decimals allowed)" })
     .min(10, { message: "Bruh pay ur delivery guys (atleast 10)" })
     .lt(100, { message: "Delivery price must be less than 100 (bruhh)" }),
 
@@ -32,7 +35,12 @@ const formSchema = z.object({
     }),
     menuItems: z.array(z.object({
         name: z.string().min(1,"Item Name is Required"),
-        price: z.coerce.number().min(1,"Price is requried"),
+        price: z.coerce.number({
+            required_error: "Price is required",
+            invalid_type_error: "Must be a valid number",
+        })
+        .int({ message: "Price must be a whole number (no decimals)" })
+        .min(1, { message: "Price must be at least 1" }),
     })),
     phone: z.string()
         .min(10, "Phone Number must be 10 digits")
@@ -40,26 +48,54 @@ const formSchema = z.object({
         .refine(val => /^\d{10}$/.test(val), {
             message: "Phone Number must be exactly 10 digits and numeric",
     }),
-
-    imageFile: z.instanceof(File, {message: "Image is required"})
-
-})
+    imageUrl: z.string().optional(),
+    imageFile: z.instanceof(File, {message: "Image is required"}).optional(),
+}).refine((data)=> data.imageUrl || data.imageFile, {
+    message: "Eihter image URL or image File must be provided",
+    path: ["imageFile"],
+});
 
 type RestaurantFormData = z.infer<typeof formSchema>;
 
 type Props = {
+    restaurant?: Restaurant;
     onSave: (restaurantFormData: FormData) => void;
     isLoading: boolean;
 };
 
-const ManageRestaurantForm = ({onSave,isLoading}:Props)=>{
+const ManageRestaurantForm = ({onSave,isLoading,restaurant}:Props)=>{
     const form = useForm<RestaurantFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             dishes: [],
             menuItems: [{name: "",price: 0}],                        
         }
-    })
+    });
+
+    useEffect(() => {
+        if (!restaurant) {
+        return;
+        }
+
+        const deliveryPriceFormatted = parseInt(
+        restaurant.deliveryPrice.toFixed(0)
+        );
+
+        const menuItemsFormatted = restaurant.menuItems.map((item) => ({
+        ...item,
+        price: parseInt(item.price),
+        }));
+
+        const updatedRestaurant = {
+        ...restaurant,
+        deliveryPrice: deliveryPriceFormatted,
+        menuItems: menuItemsFormatted,
+        };
+
+        console.log(restaurant.imageUrl);
+        
+        form.reset(updatedRestaurant);
+    } , [form, restaurant]);
 
     const onSubmit = (formDataJson:RestaurantFormData) => {
         const formData = new FormData();
@@ -79,7 +115,9 @@ const ManageRestaurantForm = ({onSave,isLoading}:Props)=>{
             formData.append(`menuItems[${index}][price]`,(menuItem.price).toString())
         })
 
-        formData.append("imageFile",formDataJson.imageFile);
+        if(formDataJson.imageFile){
+            formData.append("imageFile",formDataJson.imageFile);
+        }
 
         onSave(formData);
         
