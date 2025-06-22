@@ -1,26 +1,39 @@
 import type { RestaurantSearchResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
+import type { SearchState } from "@/pages/SearchPage";
 
 const API_BASE_URL=import.meta.env.VITE_API_BASE_URL;
-export const useSearchRestaurants = (collegeCity?:string) => {
-    const createSearchRequest = async(): Promise<RestaurantSearchResponse>=>{
-        const response= await fetch(`${API_BASE_URL}/api/restaurant/search/${collegeCity}`);
-        if(!response.ok){
-            throw new Error("Failed to get Restaurant");
-        }
+export const useSearchRestaurants = (
+  searchState: SearchState,
+  collegeCity?: string
+) => {
+  const createSearchRequest = async (): Promise<RestaurantSearchResponse> => {
+    const params = new URLSearchParams();
+    params.set("searchQuery", searchState.searchQuery);
+    params.set("page", searchState.page.toString());
+    params.set("selectedDishes", searchState.selectedDishes.join(","));
+    params.set("sortOption", searchState.sortOption);
 
-        return response.json();
+    const response = await fetch(
+      `${API_BASE_URL}/api/restaurant/search/${collegeCity}?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get restaurant");
     }
 
-    const { data: results, isLoading } = useQuery({
-        queryKey: ['searchRestaurants'],
-        queryFn:  createSearchRequest,
-        enabled: !!collegeCity
-    });
+    return response.json();
+  };
 
-    return {
-        results,
-        isLoading
-    }
+  const { data: results, isLoading } = useQuery({
+    queryKey:["searchRestaurants", searchState], 
+    queryFn: createSearchRequest, 
+    enabled: !!collegeCity,
+  });
 
-}
+
+  return {
+    results,
+    isLoading,
+  };
+};
