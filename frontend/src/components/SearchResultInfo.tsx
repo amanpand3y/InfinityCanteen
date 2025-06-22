@@ -13,7 +13,6 @@ const SearchResultInfo = ({total,collegeCity}: Props)=> {
                 {total} Restaurants Found in  {collegeMap[collegeCity]}
                 <Link to="/" className="ml-1 text-sm font-semibold underline cursor-pointer text-blue-500">Change College</Link>
             </span>
-            insert sort dropdown here
 
         </div>
     )

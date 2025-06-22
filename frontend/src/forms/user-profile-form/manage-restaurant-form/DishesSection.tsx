@@ -1,14 +1,8 @@
 import { FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import DishCheckbox from "./DishCheckbox";
 import { useFormContext } from "react-hook-form";
+import { dishList } from "@/config/restaurant-options-config";
 
-const dishList = [
-  "American", "BBQ", "Breakfast", "Burgers", "Cafe", "Chinese",
-  "Desserts", "French", "Greek", "Healthy", "Indian", "Italian",
-  "Japanese", "Mexican", "Noodles", "Organic", "Pasta", "Pizza",
-  "Salads", "Seafood", "Spanish", "Steak", "Sushi", "Tacos",
-  "Tapas", "Vegan",
-];
 
 const DishesSection = () => {
   const { control } = useFormContext();
