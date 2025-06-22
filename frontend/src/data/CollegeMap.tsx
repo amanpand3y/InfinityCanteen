@@ -1,4 +1,4 @@
-export const collegeMap = {
+export const collegeMap: Record<string,string> = {
   // Indian Institutes of Technology (IITs)
   "kharagpur": "IIT Kharagpur", //:contentReference[oaicite:0]{index=0}
   "mumbai": "IIT Bombay", //:contentReference[oaicite:1]{index=1}
