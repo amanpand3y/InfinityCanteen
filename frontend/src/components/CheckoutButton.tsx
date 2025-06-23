@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import UserProfileForm, {type UserFormData} from "@/forms/user-profile-form/UserProfileForm";
 import { useGetMyUser } from "@/api/MyUserApi";
-import Spinner from "./ui/spinner";
+import LoadingButton from "./LoadingButton";
 
 type Props = {
   onCheckout: (userFormData: UserFormData) => void;
@@ -40,7 +40,7 @@ const CheckoutButton = ({ onCheckout, disabled, isLoading }: Props) => {
   }
 
   if (isAuthLoading || !currentUser || isLoading) {
-    return <Spinner/>
+    return <LoadingButton/>
   }
 
   return (

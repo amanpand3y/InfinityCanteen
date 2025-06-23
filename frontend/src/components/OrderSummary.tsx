@@ -52,10 +52,10 @@ const OrderSummary = ({ restaurant, cartItems, removeFromCart }: Props) => {
           </div>
         ))}
         <Separator />
-        <div className="flex justify-between">
-          <span>Delivery</span>
-          <span>₹{(restaurant.deliveryPrice)}</span>
-        </div>
+          <div className="flex justify-between">
+            <span>Delivery</span>
+            <span>₹{(restaurant.deliveryPrice)}</span>
+          </div>
         <Separator />
       </CardContent>
     </>

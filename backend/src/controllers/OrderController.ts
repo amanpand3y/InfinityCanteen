@@ -1,13 +1,13 @@
 import Stripe from "stripe";
 import { Request,Response } from "express";
-import Restaurant, { MenuItemsType } from "../models/restaurant.model";
+import Restaurant, { MenuItemType } from "../models/restaurant.model";
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
 const FRONTEND_URL = process.env.FRONTEND_URL as string;
 
 // as string is for assigning type as env not defined at runtime and type script will give error
 
-type checkoutReqData = {
+type CheckoutReqData = {
     cartItems: {
         menuItemId: string,
         name: string,
@@ -26,7 +26,7 @@ type checkoutReqData = {
 
 const createCheckoutSession = async (req: Request,res: Response)=> {
     try {
-        const checkoutReqData : checkoutReqData = req.body
+        const checkoutReqData : CheckoutReqData = req.body
 
         const restaurant = await Restaurant.findById(checkoutReqData.restaurantId);
         if(!restaurant){
@@ -42,13 +42,19 @@ const createCheckoutSession = async (req: Request,res: Response)=> {
         }
         res.json({url : session.url});
     } catch (error) {
-        const err = error as { raw: { message: string } };
-        console.log(err);
-        res.status(500).json({message: err.raw.message});        
+        if (error instanceof Error) {
+            console.error(error.message);
+            res.status(500).json({ message: error.message });
+        } 
+        else {
+            console.error("Unknown error", error);
+            res.status(500).json({ message: "Unknown error occurred" });
+        }
+        
     }
 }
 
-const createLineItems = (checkoutReqData:checkoutReqData,menuItems:MenuItemsType[])=> {
+const createLineItems = (checkoutReqData:CheckoutReqData,menuItems:MenuItemType[])=> {
     //. first we got each cart items corresponding menu Item from menuItems so that we can get price
     // then we created line item for each cart Item
     // then just return that line item array 
@@ -56,14 +62,14 @@ const createLineItems = (checkoutReqData:checkoutReqData,menuItems:MenuItemsType
     const lineItems= checkoutReqData.cartItems.map((cartItem)=>{
         const menuItemId = cartItem.menuItemId;
 
-        const menuItem = menuItems.find((menuItem)=>menuItem._Id.toString() === menuItemId);
+        const menuItem = menuItems.find((menuItem)=>menuItem._id.toString() === menuItemId);
 
         if(!menuItem) throw new Error(`Menu Item not found: ${menuItemId}`);
 
         const line_item: Stripe.Checkout.SessionCreateParams.LineItem ={
             price_data: {
                 currency: "inr",
-                unit_amount: menuItem.price,
+                unit_amount: menuItem.price*100,
                 product_data: {
                     name: menuItem.name,
                 }
@@ -91,7 +97,7 @@ const createSession = async (
           display_name: "Delivery",
           type: "fixed_amount",
           fixed_amount: {
-            amount: deliveryPrice,
+            amount: deliveryPrice*100,
             currency: "inr",
           },
         },
