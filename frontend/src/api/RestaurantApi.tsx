@@ -1,4 +1,4 @@
-import type { RestaurantSearchResponse } from "@/types";
+import type { Restaurant, RestaurantSearchResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import type { SearchState } from "@/pages/SearchPage";
 
@@ -36,4 +36,26 @@ export const useSearchRestaurants = (
     results,
     isLoading,
   };
+};
+
+export const useGetRestaurant = (restaurantId?: string) => {
+  const getRestaurantByIdRequest = async (): Promise<Restaurant> => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/restaurant/${restaurantId}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to get restaurant");
+    }
+
+    return response.json();
+  };
+
+  const { data: restaurant, isLoading } = useQuery({
+    queryKey:["fetchRestaurant",restaurantId],
+    queryFn:getRestaurantByIdRequest,
+    enabled: !!restaurantId,
+  });
+
+  return { restaurant, isLoading };
 };

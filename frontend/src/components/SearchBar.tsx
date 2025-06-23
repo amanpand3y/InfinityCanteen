@@ -85,7 +85,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
                 autoComplete="off"
                 />
             </FormControl>
-
+            
             {matchingColleges.length > 0 && (
                 <Card className="absolute top-full mt-2 w-full z-10 shadow-lg">
                 <ScrollArea className="max-h-60 rounded-md">
